@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{72B2728B-F923-46DC-A752-BA25D0208E2A}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>MoreOnCode.Xna</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\PlayerIndexEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Input\GamePadCapabilitiesEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Input\GamePadEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Input\KeyboardEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Input\Touch\TouchPanelCapabilitiesEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Input\Touch\TouchPanelEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\RangedValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\BitmapFont.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\GameScreen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\GameSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\IPixelPerfectSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\TextureAtlas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\Particles\Emitter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\Particles\Modifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Graphics\Particles\Particle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Util\CollectionUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Util\CollisionUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Util\PlatformUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Util\ScreenUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Lib\Util\SpriteUtil.cs" />
+  </ItemGroup>
+</Project>

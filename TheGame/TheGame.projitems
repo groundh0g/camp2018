@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{CA2A9177-F5BF-425E-86B2-5C1B62D0D007}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>TheGame</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Screens\Credits.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Screens\Main.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Screens\Splash.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Screens\Title.cs" />
+  </ItemGroup>
+</Project>

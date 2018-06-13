@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game1", "Game1\Game1.csproj", "{18C76F0B-0D69-471B-B5E8-4481AFC0C3DE}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MoreOnCode.Xna", "MoreOnCode.Xna\MoreOnCode.Xna.shproj", "{72B2728B-F923-46DC-A752-BA25D0208E2A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TheGame", "TheGame\TheGame.shproj", "{CA2A9177-F5BF-425E-86B2-5C1B62D0D007}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MoreOnCode.Xna\MoreOnCode.Xna.projitems*{18c76f0b-0d69-471b-b5e8-4481afc0c3de}*SharedItemsImports = 4
+		TheGame\TheGame.projitems*{18c76f0b-0d69-471b-b5e8-4481afc0c3de}*SharedItemsImports = 4
+		MoreOnCode.Xna\MoreOnCode.Xna.projitems*{72b2728b-f923-46dc-a752-ba25d0208e2a}*SharedItemsImports = 13
+		TheGame\TheGame.projitems*{ca2a9177-f5bf-425e-86b2-5c1b62d0d007}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18C76F0B-0D69-471B-B5E8-4481AFC0C3DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18C76F0B-0D69-471B-B5E8-4481AFC0C3DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18C76F0B-0D69-471B-B5E8-4481AFC0C3DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18C76F0B-0D69-471B-B5E8-4481AFC0C3DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B84B5BC5-5327-4B6D-AF36-E8AAEBA9C125}
+	EndGlobalSection
+EndGlobal
