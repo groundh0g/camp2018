@@ -41,6 +41,12 @@ namespace TheGame
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;// 1500;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;// 1024;
             graphics.ApplyChanges();
+
+            var scale = (float)graphics.PreferredBackBufferHeight / 1280.0f;
+            ScreenUtil.TransformationMatrix = Matrix.CreateScale(scale);
+            var padding = ((float)graphics.PreferredBackBufferWidth - (float)graphics.PreferredBackBufferWidth * scale) / 2.0f;
+            ScreenUtil.TransformationMatrix *= Matrix.CreateTranslation(padding, 0, 0);
+
             //            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
@@ -104,7 +110,7 @@ namespace TheGame
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			//TODO: Add your drawing code here
-			spriteBatch.Begin();
+			spriteBatch.Begin(transformMatrix: ScreenUtil.TransformationMatrix);
 			ScreenUtil.Draw(gameTime, spriteBatch);
 			spriteBatch.End();
 

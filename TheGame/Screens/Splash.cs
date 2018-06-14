@@ -29,12 +29,18 @@ namespace TheGame
         }
 
         GamePadState gamepad;
+        double elapsed = 0.0;
 
 		public override void Update(GameTime gameTime)
 		{
-			gamepad = GamePadEx.GetState(PlayerIndex.One);
+            elapsed += gameTime.ElapsedGameTime.TotalSeconds;
 
-			if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.A))
+            gamepad = GamePadEx.GetState(PlayerIndex.One);
+
+            var buttonWasPressed = GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.A);
+            if (elapsed >= 3.0) { buttonWasPressed = true; }
+
+            if (buttonWasPressed)
 			{
 				ScreenUtil.Show(new Title(this.Parent));
 			}

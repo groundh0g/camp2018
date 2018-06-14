@@ -12,6 +12,7 @@ namespace MoreOnCode.Lib.Util
 {
 	public static class ScreenUtil
 	{
+        public static Matrix TransformationMatrix = Matrix.Identity;
 		public static GameScreen CurrentScreen { get; private set; }
 
 		public static bool AllowFullScreenToggle { get; set; }
