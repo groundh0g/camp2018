@@ -27,5 +27,8 @@ namespace TheGame
     {
         public Texture2D Texture { get; set; }
         public PieceTypes PieceType { get; set; }
+        public Vector2 Delta { get; set; }
+
+        public static Piece Empty { get { return new Piece() { PieceType = PieceTypes.Empty }; } }
     }
 }

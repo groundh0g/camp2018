@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace TheGame
 {
@@ -92,6 +93,43 @@ namespace TheGame
 
 
             return PieceTypes.Empty;
+        }
+
+        float speed = 500.0f;
+
+        public bool DoGravity(float elapsed)
+        {
+            var result = false;
+
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 7; y >= 0; y--)
+                {
+                    if (Pieces[x, y].PieceType != PieceTypes.Empty)
+                    {
+                        Pieces[x, y].Delta = new Vector2(0, Math.Max(0, Pieces[x, y].Delta.Y - speed * elapsed));
+                    }
+                }
+            }
+
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 7; y > 0; y--)
+                {
+                    if (Pieces[x, y].PieceType == PieceTypes.Empty)
+                    {
+                        var piece = Pieces[x, y - 1];
+                        if (piece.PieceType != PieceTypes.Empty && piece.Delta == Vector2.Zero)
+                        {
+                            Pieces[x, y] = Pieces[x, y - 1];
+                            Pieces[x, y - 1] = Piece.Empty;
+                            Pieces[x, y].Delta = new Vector2(0, 128);
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

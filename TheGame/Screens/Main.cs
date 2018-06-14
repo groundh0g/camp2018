@@ -73,6 +73,17 @@ namespace TheGame
 			{
 				ScreenUtil.Show(new Title(this.Parent));
 			}
+            else
+            {
+                if (Board.DoGravity((float)gameTime.ElapsedGameTime.TotalSeconds))
+                {
+                    // DO NOTHING!
+                }
+                else
+                {
+                    // DO SOMETHING!
+                }
+            }
 
 			base.Update(gameTime);
 		}
@@ -108,17 +119,27 @@ namespace TheGame
                     location.Y = y * tileSlot.Height;
                     if(image != null)
                     {
-                        spriteBatch.Draw(image, Origin + location, Color.White);
+                        spriteBatch.Draw(image, Origin + location - piece.Delta, Color.White);
                     }
+                }
+            }
+
+            for (int x = 0; x < 8; x++)
+            {
+                var location = new Vector2(x * tileSlot.Width, 0);
+                for (int y = 0; y < 8; y++)
+                {
+                    location.Y = y * tileSlot.Height;
                     spriteBatch.Draw(tileSlot, Origin + location, Color.White);
 
-                    for(int i = 1; i < 5; i++)
+                    for (int i = 1; i < 5; i++)
                     {
                         spriteBatch.Draw(queueSlot, Origin + new Vector2(-1.5f * queueSlot.Width, i * queueSlot.Height), Color.White);
                         spriteBatch.Draw(queueSlot, Origin + new Vector2(8.5f * queueSlot.Width, i * queueSlot.Height), Color.White);
                     }
                 }
             }
+
         }
     }
 }

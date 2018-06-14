@@ -51,8 +51,6 @@ namespace TheGame
             var padding = ((float)graphics.PreferredBackBufferWidth - (float)graphics.PreferredBackBufferWidth * scale) / 2.0f;
             ScreenUtil.TransformationMatrix = Matrix.CreateTranslation(padding, 0, 0) * Matrix.CreateScale(scale);
 
-
-
             //            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
