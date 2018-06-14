@@ -25,7 +25,8 @@ namespace TheGame
 
             splash = Content.Load<Texture2D>("splash");
             location.X = GraphicsDevice.Viewport.Width / 2 - splash.Width / 2;
-            location.Y = GraphicsDevice.Viewport.Height / 2 - splash.Height / 2;
+            //location.Y = GraphicsDevice.Viewport.Height / 2 - splash.Height / 2;
+            location.Y = 1280 / 2 - splash.Height / 2;
         }
 
         GamePadState gamepad;

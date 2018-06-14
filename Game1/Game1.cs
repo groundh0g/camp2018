@@ -42,21 +42,27 @@ namespace TheGame
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;// 1024;
             graphics.ApplyChanges();
 
+            //var scale = (float)graphics.PreferredBackBufferHeight / 1280.0f;
+            //ScreenUtil.TransformationMatrix = Matrix.CreateScale(scale);
+            //var padding = ((float)graphics.PreferredBackBufferWidth - (float)graphics.PreferredBackBufferWidth * scale) / 2.0f;
+            //ScreenUtil.TransformationMatrix *= Matrix.CreateTranslation(padding, 0, 0);
+
             var scale = (float)graphics.PreferredBackBufferHeight / 1280.0f;
-            ScreenUtil.TransformationMatrix = Matrix.CreateScale(scale);
             var padding = ((float)graphics.PreferredBackBufferWidth - (float)graphics.PreferredBackBufferWidth * scale) / 2.0f;
-            ScreenUtil.TransformationMatrix *= Matrix.CreateTranslation(padding, 0, 0);
+            ScreenUtil.TransformationMatrix = Matrix.CreateTranslation(padding, 0, 0) * Matrix.CreateScale(scale);
+
+
 
             //            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
-		/// <summary>
-		/// Allows the game to perform any initialization it needs to before starting to run.
-		/// This is where it can query for any required services and load any non-graphic
-		/// related content.  Calling base.Initialize will enumerate through any components
-		/// and initialize them as well.
-		/// </summary>
-		protected override void Initialize()
+        /// <summary>
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+        /// </summary>
+        protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
 			ScreenUtil.Show(new Splash(this));

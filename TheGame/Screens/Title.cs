@@ -25,7 +25,8 @@ namespace TheGame
 
             title = Content.Load<Texture2D>("title");
             location.X = GraphicsDevice.Viewport.Width / 2 - title.Width / 2;
-            location.Y = GraphicsDevice.Viewport.Height / 2 - title.Height / 2;
+            //location.Y = GraphicsDevice.Viewport.Height / 2 - title.Height / 2;
+            location.Y = 1280 / 2 - title.Height / 2;
         }
 
         GamePadState gamepad;
