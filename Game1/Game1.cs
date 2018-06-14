@@ -36,11 +36,12 @@ namespace TheGame
 #if WINDOWS_PHONE
             TargetElapsedTime = TimeSpan.FromTicks(333333);
 #endif
-//            graphics.IsFullScreen = true;
+            //            graphics.IsFullScreen = true;
 
-            //graphics.PreferredBackBufferWidth = 800;
-            //graphics.PreferredBackBufferHeight = 480;
-//            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;// 1500;
+            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;// 1024;
+            graphics.ApplyChanges();
+            //            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
 		/// <summary>

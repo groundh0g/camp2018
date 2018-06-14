@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MoreOnCode.Lib.Graphics;
 using MoreOnCode.Lib.Util;
@@ -15,12 +16,19 @@ namespace TheGame
 		{
 		}
 
+        public Texture2D title;
+        public Vector2 location = Vector2.Zero;
+
 		public override void Showing()
 		{
-			this.BackgroundColor = Color.Green;
-		}
+			this.BackgroundColor = Color.White;
 
-		GamePadState gamepad;
+            title = Content.Load<Texture2D>("title");
+            location.X = GraphicsDevice.Viewport.Width / 2 - title.Width / 2;
+            location.Y = GraphicsDevice.Viewport.Height / 2 - title.Height / 2;
+        }
+
+        GamePadState gamepad;
 
 		public override void Update(GameTime gameTime)
 		{
@@ -37,6 +45,13 @@ namespace TheGame
 
 			base.Update(gameTime);
 		}
-	}
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            base.Draw(gameTime, spriteBatch);
+
+            spriteBatch.Draw(title, location, Color.White);
+        }
+    }
 }
 

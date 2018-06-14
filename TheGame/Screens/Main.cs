@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MoreOnCode.Lib.Graphics;
 using MoreOnCode.Lib.Util;
@@ -15,9 +16,13 @@ namespace TheGame
 		{
 		}
 
+        public Texture2D tileSlot;
+
 		public override void Showing()
 		{
 			this.BackgroundColor = Color.CornflowerBlue;
+
+            tileSlot = this.Content.Load<Texture2D>("slot");
 		}
 
 		GamePadState gamepad;
@@ -37,6 +42,21 @@ namespace TheGame
 
 			base.Update(gameTime);
 		}
-	}
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            base.Draw(gameTime, spriteBatch);
+
+            for (int x = 0; x < 8; x++)
+            {
+                var location = new Vector2(x * tileSlot.Width, 0);
+                for (int y = 0; y < 8; y++)
+                {
+                    location.Y = y * tileSlot.Height;
+                    spriteBatch.Draw(tileSlot, location, Color.White);
+                }
+            }
+        }
+    }
 }
 
