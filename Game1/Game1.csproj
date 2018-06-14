@@ -145,6 +145,15 @@
     <Content Include="Content\title.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\piece-pacman.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\queue-select.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\queue-slot.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="..\MoreOnCode.Xna\MoreOnCode.Xna.projitems" Label="Shared" />
   <Import Project="..\TheGame\TheGame.projitems" Label="Shared" />
