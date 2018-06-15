@@ -9,6 +9,7 @@
     <Import_RootNamespace>TheGame</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Animation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Board.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Piece.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Screens\Credits.cs" />

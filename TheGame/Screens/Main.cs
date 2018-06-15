@@ -33,6 +33,8 @@ namespace TheGame
         public Texture2D pieceCheckMark;
         public Texture2D hand;
 
+        public List<Texture2D> explosionEffect = new List<Texture2D>();
+
         public Texture2D queueSlot;
         public Texture2D queueSelect;
 
@@ -40,6 +42,8 @@ namespace TheGame
 
         public Vector2 QueueRedLocation = Vector2.Zero;
         public Vector2 QueueBlueLocation = Vector2.Zero;
+
+        public Animation explosion;
 
         public override void Showing()
 		{
@@ -61,6 +65,19 @@ namespace TheGame
             pieceToggleColors = this.Content.Load<Texture2D>("piece-swap-colors");
             pieceCheckMark = this.Content.Load<Texture2D>("piece-check");
             hand = this.Content.Load<Texture2D>("hand-top");
+
+            explosionEffect.Add(Content.Load<Texture2D>("explode-1"));
+            explosionEffect.Add(Content.Load<Texture2D>("explode-2"));
+            explosionEffect.Add(Content.Load<Texture2D>("explode-3"));
+            explosionEffect.Add(Content.Load<Texture2D>("explode-4"));
+            explosionEffect.Add(Content.Load<Texture2D>("explode-5"));
+            explosionEffect.Add(Content.Load<Texture2D>("explode-6"));
+
+            explosion = new Animation();
+            explosion.Images = explosionEffect;
+            explosion.FrameDuration = 0.1f;
+            explosion.Loop = true;
+            explosion.Start();
 
             Origin = new Vector2(queueSlot.Width * 2.5f, queueSlot.Height);
 
@@ -132,6 +149,8 @@ namespace TheGame
                 }
             }
 
+            explosion.Update(gameTime);
+
 			base.Update(gameTime);
 		}
 
@@ -140,6 +159,8 @@ namespace TheGame
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             base.Draw(gameTime, spriteBatch);
+
+            spriteBatch.Draw(explosion.CurrentFrame, Vector2.Zero, Color.White);
 
             for (int x = 0; x < 8; x++)
             {
