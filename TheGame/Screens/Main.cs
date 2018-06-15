@@ -43,8 +43,6 @@ namespace TheGame
         public Vector2 QueueRedLocation = Vector2.Zero;
         public Vector2 QueueBlueLocation = Vector2.Zero;
 
-        public Animation explosion;
-
         public override void Showing()
 		{
             this.BackgroundColor = Color.CornflowerBlue;
@@ -72,12 +70,6 @@ namespace TheGame
             explosionEffect.Add(Content.Load<Texture2D>("explode-4"));
             explosionEffect.Add(Content.Load<Texture2D>("explode-5"));
             explosionEffect.Add(Content.Load<Texture2D>("explode-6"));
-
-            explosion = new Animation();
-            explosion.Images = explosionEffect;
-            explosion.FrameDuration = 0.1f;
-            explosion.Loop = true;
-            explosion.Start();
 
             Origin = new Vector2(queueSlot.Width * 2.5f, queueSlot.Height);
 
@@ -149,9 +141,14 @@ namespace TheGame
                 }
             }
 
-            explosion.Update(gameTime);
-
-			base.Update(gameTime);
+            if (Animations != null && Animations.Count > 0)
+            {
+                foreach (var animation in Animations)
+                {
+                    animation.Update(gameTime);
+                }
+            }
+            base.Update(gameTime);
 		}
 
         public Vector2 Origin = Vector2.Zero;
@@ -159,8 +156,6 @@ namespace TheGame
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             base.Draw(gameTime, spriteBatch);
-
-            spriteBatch.Draw(explosion.CurrentFrame, Vector2.Zero, Color.White);
 
             for (int x = 0; x < 8; x++)
             {
@@ -221,7 +216,76 @@ namespace TheGame
                 }
             }
 
+            if (Animations != null && Animations.Count > 0)
+            {
+                foreach (var animation in Animations)
+                {
+                    var location = Vector2.Zero;
+                    location.X = animation.Location.X * tileSlot.Width;
+                    location.Y = animation.Location.Y * tileSlot.Height;
+                    if (animation.CurrentFrame != null)
+                        spriteBatch.Draw(animation.CurrentFrame, Origin + location, Color.White);
+                }
+            }
         }
+
+        private List<Animation> Animations { get; set; }
+
+        public void BombEffect(int x, int y)
+        {
+            // TODO: Create delayed explosions horizontally
+            // TODO: Create delayed explosions down
+            Animations = new List<Animation>();
+
+            float delay = -0.3f;
+            int count = 0;
+
+            // everything to the left
+            for (int x2 = x; x2 > 0; x2--)
+            {
+                var explosion = new Animation();
+                explosion.Images = explosionEffect;
+                explosion.FrameDuration = 0.1f;
+                explosion.Loop = false;
+                explosion.Start((float)count * delay);
+                explosion.Location = new Point(x2, y);
+                Animations.Add(explosion);
+                count++;
+            }
+
+            count = 1;
+
+            // everything to the right
+            for (int x2 = x + 1; x2 < 8; x2++)
+            {
+                var explosion = new Animation();
+                explosion.Images = explosionEffect;
+                explosion.FrameDuration = 0.1f;
+                explosion.Loop = false;
+                explosion.Start((float)count * delay);
+                explosion.Location = new Point(x2, y);
+                Animations.Add(explosion);
+                count++;
+            }
+
+            count = 1;
+
+            // everything to the down
+            for (int y2 = y; y2 < 8; y2++)
+            {
+                var explosion = new Animation();
+                explosion.Images = explosionEffect;
+                explosion.FrameDuration = 0.1f;
+                explosion.Loop = false;
+                explosion.Start((float)count * delay);
+                explosion.Location = new Point(x, y2);
+                Animations.Add(explosion);
+                count++;
+            }
+
+        }
+
+
     }
 }
 
