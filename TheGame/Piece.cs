@@ -12,15 +12,15 @@ namespace TheGame
         Empty,
         NormalRed,
         NormalBlue,
-        PacMan,
+        //PacMan,
         ToggleColors,
         Stone,
-        SwapLeft,
-        SwapRight,
-        SwapDown,
+        //SwapLeft,
+        //SwapRight,
+        //SwapDown,
         Bomb,
         Kitty,
-        GoTwice
+        //GoTwice,
     }
 
     public class Piece

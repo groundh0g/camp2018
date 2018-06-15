@@ -77,20 +77,20 @@ namespace TheGame
             QueueRedLocation = new Vector2(8.5f * queueSlot.Width, queueSlot.Height);
 
             Board = new Board();
-            Board.Scramble(); // TODO: This was a test.
+            //Board.Scramble(); // TODO: This was a test.
 
             PieceImages = new Dictionary<PieceTypes, Texture2D>()
             {
                 { PieceTypes.Bomb, pieceBomb },
-                { PieceTypes.GoTwice, pieceTwice },
+                //{ PieceTypes.GoTwice, pieceTwice },
                 { PieceTypes.Kitty, pieceKitty },
                 { PieceTypes.NormalBlue, pieceBlue },
                 { PieceTypes.NormalRed, pieceRed },
-                { PieceTypes.PacMan, piecePacMan },
+                //{ PieceTypes.PacMan, piecePacMan },
                 { PieceTypes.Stone, pieceStone },
-                { PieceTypes.SwapDown, pieceSwapDown },
-                { PieceTypes.SwapLeft, pieceSwapLeft },
-                { PieceTypes.SwapRight, pieceSwapRight },
+                //{ PieceTypes.SwapDown, pieceSwapDown },
+                //{ PieceTypes.SwapLeft, pieceSwapLeft },
+                //{ PieceTypes.SwapRight, pieceSwapRight },
                 { PieceTypes.ToggleColors, pieceToggleColors },
             };
         }
@@ -103,6 +103,7 @@ namespace TheGame
 		{
 			gamepad = GamePadEx.GetState(PlayerIndex.One);
 
+
 			if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.A))
 			{
 				ScreenUtil.Show(new Credits(this.Parent));
@@ -113,7 +114,24 @@ namespace TheGame
 			}
             else
             {
-                if (Board.DoGravity((float)gameTime.ElapsedGameTime.TotalSeconds))
+                var isAnimating = false;
+                if(Animations != null && Animations.Count > 0)
+                {
+                    foreach(var animation in Animations)
+                    {
+                        if(animation.IsDone == false)
+                        {
+                            isAnimating = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(isAnimating)
+                {
+                    // DO NOTHING!
+                }
+                else if (Board.DoGravity((float)gameTime.ElapsedGameTime.TotalSeconds))
                 {
                     // DO NOTHING!
                 }
@@ -167,15 +185,15 @@ namespace TheGame
                     switch(piece.PieceType)
                     {
                         case PieceTypes.Bomb: image = pieceBomb; break;
-                        case PieceTypes.GoTwice: image = pieceTwice; break;
+                        //case PieceTypes.GoTwice: image = pieceTwice; break;
                         case PieceTypes.Kitty: image = pieceKitty; break;
                         case PieceTypes.NormalBlue: image = pieceBlue; break;
                         case PieceTypes.NormalRed: image = pieceRed; break;
-                        case PieceTypes.PacMan: image = piecePacMan; break;
+                        //case PieceTypes.PacMan: image = piecePacMan; break;
                         case PieceTypes.Stone: image = pieceStone; break;
-                        case PieceTypes.SwapDown: image = pieceSwapDown; break;
-                        case PieceTypes.SwapLeft: image = pieceSwapLeft; break;
-                        case PieceTypes.SwapRight: image = pieceSwapRight; break;
+                        //case PieceTypes.SwapDown: image = pieceSwapDown; break;
+                        //case PieceTypes.SwapLeft: image = pieceSwapLeft; break;
+                        //case PieceTypes.SwapRight: image = pieceSwapRight; break;
                         case PieceTypes.ToggleColors: image = pieceToggleColors; break;
                     }
 
@@ -199,20 +217,6 @@ namespace TheGame
                     location.Y = y * tileSlot.Height;
                     spriteBatch.Draw(tileSlot, Origin + location, Color.White);
 
-                    var queueSlotHeight = new Vector2(0, queueSlot.Height);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        spriteBatch.Draw(queueSlot, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
-                        spriteBatch.Draw(queueSlot, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
-
-                        var piece = Board.BlueQueue[i];
-                        Texture2D image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
-                        if (image != null) { spriteBatch.Draw(image, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White); }
-
-                        piece = Board.RedQueue[i];
-                        image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
-                        if (image != null) { spriteBatch.Draw(image, Origin + QueueRedLocation + i * queueSlotHeight, Color.White); }
-                    }
                 }
             }
 
@@ -227,9 +231,51 @@ namespace TheGame
                         spriteBatch.Draw(animation.CurrentFrame, Origin + location, Color.White);
                 }
             }
+
+            // TODO: are we drawing this in the x/y loops?!?!?
+            var queueSlotHeight = new Vector2(0, queueSlot.Height);
+            for (int i = 0; i < 4; i++)
+            {
+                if (i == 0)
+                {
+                    spriteBatch.Draw(queueSelect, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
+                    spriteBatch.Draw(queueSelect, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
+                }
+                else
+                {
+                    spriteBatch.Draw(queueSlot, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
+                    spriteBatch.Draw(queueSlot, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
+                }
+
+                var piece = Board.BlueQueue[i];
+                Texture2D image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
+                if (image != null) { spriteBatch.Draw(image, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White); }
+
+                piece = Board.RedQueue[i];
+                image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
+                if (image != null) { spriteBatch.Draw(image, Origin + QueueRedLocation + i * queueSlotHeight, Color.White); }
+            }
         }
 
         private List<Animation> Animations { get; set; }
+
+        public void ToggleColorsEffect()
+        {
+            for(int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    if (Board.Pieces[x, y].PieceType == PieceTypes.NormalRed)
+                    {
+                        Board.Pieces[x, y].PieceType = PieceTypes.NormalBlue;
+                    }
+                    else if (Board.Pieces[x, y].PieceType == PieceTypes.NormalBlue)
+                    {
+                        Board.Pieces[x, y].PieceType = PieceTypes.NormalRed;
+                    }
+                }
+            }
+        }
 
         public void BombEffect(int x, int y)
         {
@@ -241,7 +287,7 @@ namespace TheGame
             int count = 0;
 
             // everything to the left
-            for (int x2 = x; x2 > 0; x2--)
+            for (int x2 = x; x2 >= 0; x2--)
             {
                 var explosion = new Animation();
                 explosion.Images = explosionEffect;

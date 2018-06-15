@@ -20,9 +20,9 @@ namespace TheGame
         public List<Piece> RedQueue = new List<Piece>() { Piece.Empty, Piece.Empty, Piece.Empty, Piece.Empty };
         public List<Piece> BlueQueue = new List<Piece>() { Piece.Empty, Piece.Empty, Piece.Empty, Piece.Empty };
 
+        public Random rand = new Random();
         public void FillQueue(List<Piece> queue, PieceTypes type)
         {
-            var rand = new Random();
 
             if (queue[0].PieceType == PieceTypes.Empty) { queue[0] = new Piece() { PieceType = type }; }
             for(int i = 1; i < queue.Count; i++)
