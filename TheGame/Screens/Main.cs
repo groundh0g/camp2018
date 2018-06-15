@@ -100,9 +100,9 @@ namespace TheGame
                 { PieceTypes.NormalRed, pieceRed },
                 //{ PieceTypes.PacMan, piecePacMan },
                 { PieceTypes.Stone, pieceStone },
-                //{ PieceTypes.SwapDown, pieceSwapDown },
-                //{ PieceTypes.SwapLeft, pieceSwapLeft },
-                //{ PieceTypes.SwapRight, pieceSwapRight },
+                { PieceTypes.SwapDown, pieceSwapDown },
+                { PieceTypes.SwapLeft, pieceSwapLeft },
+                { PieceTypes.SwapRight, pieceSwapRight },
                 { PieceTypes.ToggleColors, pieceToggleColors },
             };
 
@@ -211,6 +211,10 @@ namespace TheGame
                 {
                     // DO NOTHING!
                 }
+                else if(Board.RemoveExploded())
+                {
+                    // DO NOTHING!
+                }
                 else if (Board.DoGravity((float)gameTime.ElapsedGameTime.TotalSeconds))
                 {
                     // DO NOTHING!
@@ -224,27 +228,25 @@ namespace TheGame
                     }
                     else
                     {
-                        Board.RemoveExploded();
-                    }
+                        var matchRed = Board.ScanForMatches(Board.MatchOnRed);
+                        var matchBlue = Board.ScanForMatches(Board.MatchOnBlue);
 
-                    var matchRed = Board.ScanForMatches(Board.MatchOnRed);
-                    var matchBlue = Board.ScanForMatches(Board.MatchOnBlue);
-
-                    if (matchRed == PieceTypes.NormalRed && matchBlue == PieceTypes.NormalBlue)
-                    {
-                        // TIE GAME :/
-                    }
-                    else if (matchBlue == PieceTypes.NormalBlue)
-                    {
-                        // BLUE WINS!
-                    }
-                    else if(matchRed == PieceTypes.NormalRed)
-                    {
-                        // RED WINS!
-                    }
-                    else if(Board.IsFull)
-                    {
-                        // TIE GAME :/
+                        if (matchRed == PieceTypes.NormalRed && matchBlue == PieceTypes.NormalBlue)
+                        {
+                            // TIE GAME :/
+                        }
+                        else if (matchBlue == PieceTypes.NormalBlue)
+                        {
+                            // BLUE WINS!
+                        }
+                        else if (matchRed == PieceTypes.NormalRed)
+                        {
+                            // RED WINS!
+                        }
+                        else if (Board.IsFull)
+                        {
+                            // TIE GAME :/
+                        }
                     }
                 }
             }
@@ -260,6 +262,7 @@ namespace TheGame
 		}
 
         public Vector2 Origin = Vector2.Zero;
+        public Color ColorTransparent = new Color(Color.White, 0.5f);
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -287,16 +290,17 @@ namespace TheGame
                         case PieceTypes.NormalRed: image = pieceRed; break;
                         //case PieceTypes.PacMan: image = piecePacMan; break;
                         case PieceTypes.Stone: image = pieceStone; break;
-                        //case PieceTypes.SwapDown: image = pieceSwapDown; break;
-                        //case PieceTypes.SwapLeft: image = pieceSwapLeft; break;
-                        //case PieceTypes.SwapRight: image = pieceSwapRight; break;
+                        case PieceTypes.SwapDown: image = pieceSwapDown; break;
+                        case PieceTypes.SwapLeft: image = pieceSwapLeft; break;
+                        case PieceTypes.SwapRight: image = pieceSwapRight; break;
                         case PieceTypes.ToggleColors: image = pieceToggleColors; break;
                     }
 
                     location.Y = y * tileSlot.Height;
                     if(image != null)
                     {
-                        spriteBatch.Draw(image, Origin + location - piece.Delta, Color.White);
+                        var color = piece.IsExploded ? ColorTransparent : Color.White;
+                        spriteBatch.Draw(image, Origin + location - piece.Delta, color);
                         if (piece.IsChecked)
                         {
                             spriteBatch.Draw(pieceCheckMark, Origin + location - piece.Delta, Color.White);
