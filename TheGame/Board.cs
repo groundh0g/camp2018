@@ -27,14 +27,14 @@ namespace TheGame
         {
 
             if (queue[0].PieceType == PieceTypes.Empty) { queue[0] = new Piece() { PieceType = type }; }
-            for(int i = 1; i < queue.Count; i++)
+            for (int i = 1; i < queue.Count; i++)
             {
-                if(queue[i].PieceType == PieceTypes.Empty)
+                if (queue[i].PieceType == PieceTypes.Empty)
                 {
                     var values = Enum.GetValues(typeof(PieceTypes));
                     var pieceType = PieceTypes.Empty;
 
-                    while(pieceType == PieceTypes.Empty)
+                    while (pieceType == PieceTypes.Empty)
                     {
                         pieceType = (PieceTypes)values.GetValue(rand.Next(values.Length - 1));
                         if (MatchOn.Contains(pieceType)) { pieceType = PieceTypes.Empty; }
@@ -47,11 +47,12 @@ namespace TheGame
 
         public void ClearBoard()
         {
-            for(int x = 0; x < 8; x++)
+            for (int x = 0; x < 8; x++)
             {
-                for(int y = 0; y < 8; y++)
+                for (int y = 0; y < 8; y++)
                 {
-                    Pieces[x, y] = new Piece {
+                    Pieces[x, y] = new Piece
+                    {
                         Texture = null,
                         PieceType = PieceTypes.Empty
                     };
@@ -80,8 +81,8 @@ namespace TheGame
                 {
                     var piece = (PieceTypes)values.GetValue(rand.Next(values.Length - 1));
                     var normalTile = rand.Next(10);
-                    Pieces[x, y].PieceType = 
-                        normalTile < 3 ? PieceTypes.NormalBlue  : 
+                    Pieces[x, y].PieceType =
+                        normalTile < 3 ? PieceTypes.NormalBlue :
                         normalTile < 6 ? PieceTypes.NormalRed : piece;
                 }
             }
@@ -108,13 +109,14 @@ namespace TheGame
 
         public bool IsFull
         {
-            get {
+            get
+            {
                 var countEmpty = 0;
-                for(int y = 0; y< 8; y++)
+                for (int y = 0; y < 8; y++)
                 {
-                    for(int x = 0; x < 8; x++)
+                    for (int x = 0; x < 8; x++)
                     {
-                        if(Pieces[x,y].PieceType == PieceTypes.Empty)
+                        if (Pieces[x, y].PieceType == PieceTypes.Empty)
                         {
                             countEmpty++;
                         }
@@ -200,10 +202,10 @@ namespace TheGame
                 new Point[] { new Point(4,7), new Point(7,4) },
             };
 
-            foreach(var point in endpoints)
+            foreach (var point in endpoints)
             {
                 var matched = ScanDiagonal(point[0], point[1], matchOn);
-                if(matched != PieceTypes.Empty)
+                if (matched != PieceTypes.Empty)
                 {
                     return matched;
                 }
@@ -292,7 +294,7 @@ namespace TheGame
                 {
                     if (Pieces[x, y].PieceType != PieceTypes.Empty)
                     {
-                        if(Pieces[x,y].Delta.Y > 0.0f) { result = true; }
+                        if (Pieces[x, y].Delta.Y > 0.0f) { result = true; }
                         Pieces[x, y].Delta = new Vector2(0, Math.Max(0, Pieces[x, y].Delta.Y - speed * elapsed));
                     }
                 }
@@ -336,11 +338,11 @@ namespace TheGame
                 PieceTypes.ToggleColors,
             };
 
-            for(int y = 0; y < 8; y++)
+            for (int y = 0; y < 8; y++)
             {
-                for(int x = 0; x < 8; x++)
+                for (int x = 0; x < 8; x++)
                 {
-                    if(powerups.Contains(Pieces[x,y].PieceType))
+                    if (powerups.Contains(Pieces[x, y].PieceType))
                     {
                         result = true;
                         var newPiece = Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue;
@@ -455,7 +457,7 @@ namespace TheGame
         public bool RemoveExploded()
         {
             var result = false;
-            for(int y = 0; y < 8; y++)
+            for (int y = 0; y < 8; y++)
             {
                 for (int x = 0; x < 8; x++)
                 {
@@ -473,7 +475,16 @@ namespace TheGame
         {
             if (x > 0)
             {
-                Pieces[x, y] = Pieces[x - 1, y];
+                var other = Pieces[x - 1, y];
+                switch (other.PieceType)
+                {
+                    case PieceTypes.Empty:
+                    case PieceTypes.Stone:
+                        break;
+                    default:
+                        Swap(new Point(x, y), new Point(x - 1, y));
+                        break;
+                }
             }
         }
 
@@ -481,7 +492,16 @@ namespace TheGame
         {
             if (x < 7)
             {
-                Pieces[x, y] = Pieces[x + 1, y];
+                var other = Pieces[x + 1, y];
+                switch (other.PieceType)
+                {
+                    case PieceTypes.Empty:
+                    case PieceTypes.Stone:
+                        break;
+                    default:
+                        Swap(new Point(x, y), new Point(x + 1, y));
+                        break;
+                }
             }
         }
 
@@ -489,7 +509,38 @@ namespace TheGame
         {
             if (y < 7)
             {
-                Pieces[x, y] = Pieces[x, y + 1];
+                var other = Pieces[x, y + 1];
+                switch (other.PieceType)
+                {
+                    case PieceTypes.Empty:
+                    case PieceTypes.Stone:
+                        break;
+                    default:
+                        Swap(new Point(x, y), new Point(x, y + 1));
+                        break;
+                }
+            }
+        }
+
+        private void Swap(Point a, Point b)
+        {
+            Pieces[a.X, a.Y].PieceType = Pieces[b.X, b.Y].PieceType;
+            Pieces[b.X, b.Y].PieceType = Player == PlayerIndex.One ? PieceTypes.NormalBlue : PieceTypes.NormalRed;
+            ClearPieceFlags();
+            //var swap = Pieces[a.X, a.Y];
+            //Pieces[a.X, a.Y] = Pieces[b.X, b.Y];
+            //Pieces[b.X, b.Y].PieceType = Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue;
+        }
+
+        public void ClearPieceFlags()
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    Pieces[x, y].IsChecked = false;
+                    Pieces[x, y].IsExploded = false;
+                }
             }
         }
     }

@@ -30,6 +30,8 @@ namespace TheGame
         public Texture2D piecePacMan;
         public Texture2D pieceToggleColors;
 
+        //public Texture2D background;
+
         public Texture2D pieceCheckMark;
         public Texture2D hand;
 
@@ -73,6 +75,8 @@ namespace TheGame
             pieceToggleColors = this.Content.Load<Texture2D>("piece-swap-colors");
             pieceCheckMark = this.Content.Load<Texture2D>("piece-check");
             hand = this.Content.Load<Texture2D>("hand-top");
+
+            //background = Content.Load<Texture2D>("group");
 
             explosionEffect.Add(Content.Load<Texture2D>("explode-1"));
             explosionEffect.Add(Content.Load<Texture2D>("explode-2"));
@@ -143,6 +147,8 @@ namespace TheGame
                         = Piece.Empty;
                     StagedPieceColumn = 3;
                     State = GameState.SelectingColumn;
+
+                    Board.ClearPieceFlags();
                 }
 
             }
@@ -172,6 +178,8 @@ namespace TheGame
                                 Board.FillQueue(Board.RedQueue, PieceTypes.NormalRed);
                                 break;
                         }
+
+                        Board.ClearPieceFlags();
 
                         State = GameState.SelectingFromQueue;
                         StagedPiece = Piece.Empty;
@@ -214,6 +222,7 @@ namespace TheGame
                 else if(Board.RemoveExploded())
                 {
                     // DO NOTHING!
+                    Board.ClearPieceFlags();
                 }
                 else if (Board.DoGravity((float)gameTime.ElapsedGameTime.TotalSeconds))
                 {
@@ -221,7 +230,8 @@ namespace TheGame
                 }
                 else
                 {
-                    // TODO: scan for powerups
+                    Board.ClearPieceFlags();
+
                     if (Board.ScanForPowerUps())
                     {
 
@@ -267,6 +277,8 @@ namespace TheGame
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             base.Draw(gameTime, spriteBatch);
+
+            //spriteBatch.Draw(background, Vector2.Zero, Color.White);
 
             if (StagedPiece != null && StagedPiece.PieceType != PieceTypes.Empty)
             {

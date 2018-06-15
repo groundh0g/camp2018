@@ -178,6 +178,7 @@
     <Content Include="Content\explode-6.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\group.xnb" />
   </ItemGroup>
   <Import Project="..\MoreOnCode.Xna\MoreOnCode.Xna.projitems" Label="Shared" />
   <Import Project="..\TheGame\TheGame.projitems" Label="Shared" />
