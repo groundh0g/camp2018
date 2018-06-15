@@ -65,7 +65,7 @@ namespace TheGame
 
         public void TogglePlayer()
         {
-            Player = Player == PlayerIndex.One ? PlayerIndex.One : PlayerIndex.Two;
+            Player = Player == PlayerIndex.One ? PlayerIndex.Two : PlayerIndex.One;
         }
 
         public void Scramble()

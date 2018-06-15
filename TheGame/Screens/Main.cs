@@ -43,6 +43,16 @@ namespace TheGame
         public Vector2 QueueRedLocation = Vector2.Zero;
         public Vector2 QueueBlueLocation = Vector2.Zero;
 
+        public Piece StagedPiece { get; set; }
+        public int StagedPieceColumn { get; set; }
+
+        public enum GameState {
+            SelectingFromQueue,
+            SelectingColumn,
+            Unknown
+        };
+        public GameState State { get; set; }
+
         public override void Showing()
 		{
             this.BackgroundColor = Color.CornflowerBlue;
@@ -93,6 +103,9 @@ namespace TheGame
                 //{ PieceTypes.SwapRight, pieceSwapRight },
                 { PieceTypes.ToggleColors, pieceToggleColors },
             };
+
+            StagedPiece = Piece.Empty;
+            State = GameState.SelectingFromQueue;
         }
 
         public Dictionary<PieceTypes, Texture2D> PieceImages;
@@ -104,22 +117,76 @@ namespace TheGame
 		public override void Update(GameTime gameTime)
 		{
             // TODO: Fix, the add 2nd controller
-			gamepad = GamePadEx.GetState(PlayerIndex.One);
+			gamepad = GamePadEx.GetState(Board.Player);
 
-            if(GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.DPadUp))
+            if(State == GameState.SelectingFromQueue)
             {
-                SelectedQueueIndex = Math.Max(0, SelectedQueueIndex - 1);
+                if (GamePadEx.WasJustPressed(Board.Player, Buttons.DPadUp))
+                {
+                    SelectedQueueIndex = Math.Max(0, SelectedQueueIndex - 1);
+                }
+                else if (GamePadEx.WasJustPressed(Board.Player, Buttons.DPadDown))
+                {
+                    SelectedQueueIndex = Math.Min(3, SelectedQueueIndex + 1);
+                }
+
+                if (GamePadEx.WasJustPressed(Board.Player, Buttons.A))
+                {
+                    //ScreenUtil.Show(new Credits(this.Parent));
+                    // TODO: move selected piece to top for drop
+                    StagedPiece = Board.Player == PlayerIndex.One ?
+                        Board.BlueQueue[SelectedQueueIndex] :
+                        Board.RedQueue[SelectedQueueIndex];
+                    (Board.Player == PlayerIndex.One ? Board.BlueQueue : Board.RedQueue)[SelectedQueueIndex]
+                        = Piece.Empty;
+                    StagedPieceColumn = 3;
+                    State = GameState.SelectingColumn;
+                }
+
             }
-            else if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.DPadDown))
+            else if(State == GameState.SelectingColumn)
             {
-                SelectedQueueIndex = Math.Min(3, SelectedQueueIndex + 1);
+                if (GamePadEx.WasJustPressed(Board.Player, Buttons.DPadLeft))
+                {
+                    StagedPieceColumn = Math.Max(0, StagedPieceColumn - 1);
+                }
+                else if (GamePadEx.WasJustPressed(Board.Player, Buttons.DPadRight))
+                {
+                    StagedPieceColumn = Math.Min(7, StagedPieceColumn + 1);
+                }
+
+                if(GamePadEx.WasJustPressed(Board.Player, Buttons.A))
+                {
+                    if(Board.Pieces[StagedPieceColumn,0].PieceType == PieceTypes.Empty)
+                    {
+                        Board.Pieces[StagedPieceColumn, 0] = StagedPiece;
+
+                        switch (Board.Player)
+                        {
+                            case PlayerIndex.One:
+                                Board.FillQueue(Board.BlueQueue, PieceTypes.NormalBlue);
+                                break;
+                            case PlayerIndex.Two:
+                                Board.FillQueue(Board.RedQueue, PieceTypes.NormalRed);
+                                break;
+                        }
+
+                        State = GameState.SelectingFromQueue;
+                        StagedPiece = Piece.Empty;
+                        Board.TogglePlayer();
+                    }
+                }
             }
 
-            if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.A))
-			{
-				//ScreenUtil.Show(new Credits(this.Parent));
-			}
-			else if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.Back))
+
+
+
+
+
+
+
+
+            if (GamePadEx.WasJustPressed(Board.Player, Buttons.Back))
 			{
 				ScreenUtil.Show(new Title(this.Parent));
 			}
@@ -186,6 +253,12 @@ namespace TheGame
         {
             base.Draw(gameTime, spriteBatch);
 
+            if (StagedPiece != null && StagedPiece.PieceType != PieceTypes.Empty)
+            {
+                var stagedLocation = new Vector2(StagedPieceColumn * tileSlot.Width, -tileSlot.Height);
+                spriteBatch.Draw(PieceImages[StagedPiece.PieceType], Origin + stagedLocation, Color.White);
+            }
+
             for (int x = 0; x < 8; x++)
             {
                 var location = new Vector2(x * tileSlot.Width, 0);
@@ -227,7 +300,6 @@ namespace TheGame
                 {
                     location.Y = y * tileSlot.Height;
                     spriteBatch.Draw(tileSlot, Origin + location, Color.White);
-
                 }
             }
 
@@ -243,19 +315,20 @@ namespace TheGame
                 }
             }
 
-            // TODO: are we drawing this in the x/y loops?!?!?
+
             var queueSlotHeight = new Vector2(0, queueSlot.Height);
             for (int i = 0; i < 4; i++)
             {
-                if (i == SelectedQueueIndex)
+                spriteBatch.Draw(queueSlot, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
+                spriteBatch.Draw(queueSlot, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
+
+                if (Board.Player == PlayerIndex.One && i == SelectedQueueIndex)
                 {
                     spriteBatch.Draw(queueSelect, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
-                    spriteBatch.Draw(queueSelect, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
                 }
-                else
+                else if (Board.Player == PlayerIndex.Two && i == SelectedQueueIndex)
                 {
-                    spriteBatch.Draw(queueSlot, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
-                    spriteBatch.Draw(queueSlot, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
+                    spriteBatch.Draw(queueSelect, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
                 }
 
                 var piece = Board.BlueQueue[i];
