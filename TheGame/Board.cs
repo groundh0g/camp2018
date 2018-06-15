@@ -321,5 +321,50 @@ namespace TheGame
 
             return result;
         }
+
+        public void ScanForPowerUps()
+        {
+            var powerups = new List<PieceTypes>() {
+                PieceTypes.Bomb,
+                PieceTypes.Kitty,
+                PieceTypes.Stone,
+                PieceTypes.ToggleColors,
+            };
+
+            for(int y = 0; y < 8; y++)
+            {
+                for(int x = 0; x < 8; x++)
+                {
+                    if(powerups.Contains(Pieces[x,y].PieceType))
+                    {
+                        switch(Pieces[x, y].PieceType)
+                        {
+                            case PieceTypes.ToggleColors:
+                                ToggleColorsEffect();
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ToggleColorsEffect()
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    if (Pieces[x, y].PieceType == PieceTypes.NormalRed)
+                    {
+                        Pieces[x, y].PieceType = PieceTypes.NormalBlue;
+                    }
+                    else if (Pieces[x, y].PieceType == PieceTypes.NormalBlue)
+                    {
+                        Pieces[x, y].PieceType = PieceTypes.NormalRed;
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -215,6 +215,9 @@ namespace TheGame
                 }
                 else
                 {
+                    // TODO: scan for powerups
+                    Board.ScanForPowerUps();
+
                     var matchRed = Board.ScanForMatches(Board.MatchOnRed);
                     var matchBlue = Board.ScanForMatches(Board.MatchOnBlue);
 
@@ -343,23 +346,6 @@ namespace TheGame
 
         private List<Animation> Animations { get; set; }
 
-        public void ToggleColorsEffect()
-        {
-            for(int y = 0; y < 8; y++)
-            {
-                for (int x = 0; x < 8; x++)
-                {
-                    if (Board.Pieces[x, y].PieceType == PieceTypes.NormalRed)
-                    {
-                        Board.Pieces[x, y].PieceType = PieceTypes.NormalBlue;
-                    }
-                    else if (Board.Pieces[x, y].PieceType == PieceTypes.NormalBlue)
-                    {
-                        Board.Pieces[x, y].PieceType = PieceTypes.NormalRed;
-                    }
-                }
-            }
-        }
 
         public void BombEffect(int x, int y)
         {
