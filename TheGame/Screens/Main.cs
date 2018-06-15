@@ -89,6 +89,8 @@ namespace TheGame
             Board = new Board();
             //Board.Scramble(); // TODO: This was a test.
 
+            Board.ExplosionImages = explosionEffect;
+
             PieceImages = new Dictionary<PieceTypes, Texture2D>()
             {
                 { PieceTypes.Bomb, pieceBomb },
@@ -193,9 +195,9 @@ namespace TheGame
             else
             {
                 var isAnimating = false;
-                if(Animations != null && Animations.Count > 0)
+                if(Board.Animations != null && Board.Animations.Count > 0)
                 {
-                    foreach(var animation in Animations)
+                    foreach(var animation in Board.Animations)
                     {
                         if(animation.IsDone == false)
                         {
@@ -216,7 +218,14 @@ namespace TheGame
                 else
                 {
                     // TODO: scan for powerups
-                    Board.ScanForPowerUps();
+                    if (Board.ScanForPowerUps())
+                    {
+
+                    }
+                    else
+                    {
+                        Board.RemoveExploded();
+                    }
 
                     var matchRed = Board.ScanForMatches(Board.MatchOnRed);
                     var matchBlue = Board.ScanForMatches(Board.MatchOnBlue);
@@ -240,9 +249,9 @@ namespace TheGame
                 }
             }
 
-            if (Animations != null && Animations.Count > 0)
+            if (Board.Animations != null && Board.Animations.Count > 0)
             {
-                foreach (var animation in Animations)
+                foreach (var animation in Board.Animations)
                 {
                     animation.Update(gameTime);
                 }
@@ -306,9 +315,9 @@ namespace TheGame
                 }
             }
 
-            if (Animations != null && Animations.Count > 0)
+            if (Board.Animations != null && Board.Animations.Count > 0)
             {
-                foreach (var animation in Animations)
+                foreach (var animation in Board.Animations)
                 {
                     var location = Vector2.Zero;
                     location.X = animation.Location.X * tileSlot.Width;
@@ -343,64 +352,6 @@ namespace TheGame
                 if (image != null) { spriteBatch.Draw(image, Origin + QueueRedLocation + i * queueSlotHeight, Color.White); }
             }
         }
-
-        private List<Animation> Animations { get; set; }
-
-
-        public void BombEffect(int x, int y)
-        {
-            // TODO: Create delayed explosions horizontally
-            // TODO: Create delayed explosions down
-            Animations = new List<Animation>();
-
-            float delay = -0.3f;
-            int count = 0;
-
-            // everything to the left
-            for (int x2 = x; x2 >= 0; x2--)
-            {
-                var explosion = new Animation();
-                explosion.Images = explosionEffect;
-                explosion.FrameDuration = 0.1f;
-                explosion.Loop = false;
-                explosion.Start((float)count * delay);
-                explosion.Location = new Point(x2, y);
-                Animations.Add(explosion);
-                count++;
-            }
-
-            count = 1;
-
-            // everything to the right
-            for (int x2 = x + 1; x2 < 8; x2++)
-            {
-                var explosion = new Animation();
-                explosion.Images = explosionEffect;
-                explosion.FrameDuration = 0.1f;
-                explosion.Loop = false;
-                explosion.Start((float)count * delay);
-                explosion.Location = new Point(x2, y);
-                Animations.Add(explosion);
-                count++;
-            }
-
-            count = 1;
-
-            // everything to the down
-            for (int y2 = y; y2 < 8; y2++)
-            {
-                var explosion = new Animation();
-                explosion.Images = explosionEffect;
-                explosion.FrameDuration = 0.1f;
-                explosion.Loop = false;
-                explosion.Start((float)count * delay);
-                explosion.Location = new Point(x, y2);
-                Animations.Add(explosion);
-                count++;
-            }
-
-        }
-
 
     }
 }

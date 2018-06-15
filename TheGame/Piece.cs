@@ -31,5 +31,6 @@ namespace TheGame
 
         public static Piece Empty { get { return new Piece() { PieceType = PieceTypes.Empty }; } }
         public bool IsChecked { get; set; }
+        public bool IsExploded { get; set; }
     }
 }

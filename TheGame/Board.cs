@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TheGame
 {
@@ -322,8 +323,9 @@ namespace TheGame
             return result;
         }
 
-        public void ScanForPowerUps()
+        public bool ScanForPowerUps()
         {
+            var result = false;
             var powerups = new List<PieceTypes>() {
                 PieceTypes.Bomb,
                 PieceTypes.Kitty,
@@ -337,15 +339,22 @@ namespace TheGame
                 {
                     if(powerups.Contains(Pieces[x,y].PieceType))
                     {
+                        result = true;
                         switch(Pieces[x, y].PieceType)
                         {
                             case PieceTypes.ToggleColors:
                                 ToggleColorsEffect();
+                                Pieces[x, y].PieceType = Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue;
+                                break;
+                            case PieceTypes.Bomb:
+                                BombEffect(x, y);
+                                Pieces[x, y].PieceType = Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue;
                                 break;
                         }
                     }
                 }
             }
+            return result;
         }
 
         public void ToggleColorsEffect()
@@ -366,5 +375,76 @@ namespace TheGame
             }
         }
 
+
+        public List<Animation> Animations { get; set; }
+        public List<Texture2D> ExplosionImages { get; set; }
+
+        public void BombEffect(int x, int y)
+        {
+            Animations = new List<Animation>();
+
+            float delay = -0.3f;
+            int count = 0;
+
+            // everything to the left
+            for (int x2 = x; x2 >= 0; x2--)
+            {
+                var explosion = new Animation();
+                explosion.Images = ExplosionImages;
+                explosion.FrameDuration = 0.1f;
+                explosion.Loop = false;
+                explosion.Start((float)count * delay);
+                explosion.Location = new Point(x2, y);
+                Animations.Add(explosion);
+                count++;
+                Pieces[x2, y].IsExploded = true;
+            }
+
+            count = 1;
+
+            // everything to the right
+            for (int x2 = x + 1; x2 < 8; x2++)
+            {
+                var explosion = new Animation();
+                explosion.Images = ExplosionImages;
+                explosion.FrameDuration = 0.1f;
+                explosion.Loop = false;
+                explosion.Start((float)count * delay);
+                explosion.Location = new Point(x2, y);
+                Animations.Add(explosion);
+                count++;
+                Pieces[x2, y].IsExploded = true;
+            }
+
+            count = 1;
+
+            // everything to the down
+            for (int y2 = y; y2 < 8; y2++)
+            {
+                var explosion = new Animation();
+                explosion.Images = ExplosionImages;
+                explosion.FrameDuration = 0.1f;
+                explosion.Loop = false;
+                explosion.Start((float)count * delay);
+                explosion.Location = new Point(x, y2);
+                Animations.Add(explosion);
+                count++;
+                Pieces[x, y2].IsExploded = true;
+            }
+        }
+
+        public void RemoveExploded()
+        {
+            for(int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    if (Pieces[x, y].IsExploded)
+                    {
+                        Pieces[x, y] = Piece.Empty;
+                    }
+                }
+            }
+        }
     }
 }
