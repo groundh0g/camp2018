@@ -12,6 +12,35 @@ namespace TheGame
         public Board()
         {
             ClearBoard();
+
+            //BlueQueue = new List<Piece>();
+            //RedQueue = new List<Piece>();
+        }
+
+        public List<Piece> RedQueue = new List<Piece>() { Piece.Empty, Piece.Empty, Piece.Empty, Piece.Empty };
+        public List<Piece> BlueQueue = new List<Piece>() { Piece.Empty, Piece.Empty, Piece.Empty, Piece.Empty };
+
+        public void FillQueue(List<Piece> queue, PieceTypes type)
+        {
+            var rand = new Random();
+
+            if (queue[0].PieceType == PieceTypes.Empty) { queue[0] = new Piece() { PieceType = type }; }
+            for(int i = 1; i < queue.Count; i++)
+            {
+                if(queue[i].PieceType == PieceTypes.Empty)
+                {
+                    var values = Enum.GetValues(typeof(PieceTypes));
+                    var pieceType = PieceTypes.Empty;
+
+                    while(pieceType == PieceTypes.Empty)
+                    {
+                        pieceType = (PieceTypes)values.GetValue(rand.Next(values.Length - 1));
+                        if (MatchOn.Contains(pieceType)) { pieceType = PieceTypes.Empty; }
+                    }
+
+                    queue[i] = new Piece() { PieceType = pieceType };
+                }
+            }
         }
 
         public void ClearBoard()
@@ -26,6 +55,9 @@ namespace TheGame
                     };
                 }
             }
+
+            FillQueue(BlueQueue, PieceTypes.NormalBlue);
+            FillQueue(RedQueue, PieceTypes.NormalRed);
         }
 
         public void Scramble()
@@ -44,6 +76,9 @@ namespace TheGame
                         normalTile < 6 ? PieceTypes.NormalRed : piece;
                 }
             }
+
+            FillQueue(BlueQueue, PieceTypes.NormalBlue);
+            FillQueue(RedQueue, PieceTypes.NormalRed);
         }
 
         private List<PieceTypes> MatchOn = new List<PieceTypes>()
@@ -52,12 +87,41 @@ namespace TheGame
             PieceTypes.NormalRed,
         };
 
+        public static List<PieceTypes> MatchOnRed = new List<PieceTypes>()
+        {
+            PieceTypes.NormalRed,
+        };
+
+        public static List<PieceTypes> MatchOnBlue = new List<PieceTypes>()
+        {
+            PieceTypes.NormalBlue,
+        };
+
+        public bool IsFull
+        {
+            get {
+                var countEmpty = 0;
+                for(int y = 0; y< 8; y++)
+                {
+                    for(int x = 0; x < 8; x++)
+                    {
+                        if(Pieces[x,y].PieceType == PieceTypes.Empty)
+                        {
+                            countEmpty++;
+                        }
+                    }
+                }
+                return countEmpty == 0;
+            }
+        }
+
         /// <summary>
         /// This will scan the board for match-four.
         /// </summary>
         /// <returns>NormalRed, NormalBlue, or Empty (for a tie)</returns>
-        public PieceTypes ScanForMatches()
+        public PieceTypes ScanForMatches(List<PieceTypes> matchOn)
         {
+            matchOn = matchOn != null && matchOn.Count > 0 ? matchOn : MatchOn;
             // Scan Horizontal
             for (int y = 0; y < 8; y++)
             {
@@ -65,7 +129,7 @@ namespace TheGame
                 var tempCount = 0;
                 for (int x = 1; x < 8; x++)
                 {
-                    if (MatchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x - 1, y].PieceType)
+                    if (matchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x - 1, y].PieceType)
                     {
                         temp = Pieces[x, y].PieceType;
                         tempCount++;
@@ -93,7 +157,7 @@ namespace TheGame
                 var tempCount = 0;
                 for (int y = 1; y < 8; y++)
                 {
-                    if (MatchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x, y - 1].PieceType)
+                    if (matchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x, y - 1].PieceType)
                     {
                         temp = Pieces[x, y].PieceType;
                         tempCount++;
@@ -129,7 +193,7 @@ namespace TheGame
 
             foreach(var point in endpoints)
             {
-                var matched = ScanDiagonal(point[0], point[1]);
+                var matched = ScanDiagonal(point[0], point[1], matchOn);
                 if(matched != PieceTypes.Empty)
                 {
                     return matched;
@@ -152,7 +216,7 @@ namespace TheGame
 
             foreach (var point in endpoints)
             {
-                var matched = ScanDiagonal(point[0], point[1]);
+                var matched = ScanDiagonal(point[0], point[1], matchOn);
                 if (matched != PieceTypes.Empty)
                 {
                     return matched;
@@ -162,7 +226,7 @@ namespace TheGame
             return PieceTypes.Empty;
         }
 
-        private PieceTypes ScanDiagonal(Point start, Point end)
+        private PieceTypes ScanDiagonal(Point start, Point end, List<PieceTypes> matchOn)
         {
             int dx = end.X - start.X;
             int dy = end.Y - start.Y;
@@ -181,7 +245,7 @@ namespace TheGame
                 var x = point.X;
                 var y = point.Y;
 
-                if (MatchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x - dx, y - dy].PieceType)
+                if (matchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x - dx, y - dy].PieceType)
                 {
                     temp = Pieces[x, y].PieceType;
                     tempCount++;

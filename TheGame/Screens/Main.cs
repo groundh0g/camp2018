@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -37,9 +38,12 @@ namespace TheGame
 
         public Board Board { get; set; }
 
+        public Vector2 QueueRedLocation = Vector2.Zero;
+        public Vector2 QueueBlueLocation = Vector2.Zero;
+
         public override void Showing()
 		{
-			this.BackgroundColor = Color.CornflowerBlue;
+            this.BackgroundColor = Color.CornflowerBlue;
 
             tileSlot = this.Content.Load<Texture2D>("slot");
             queueSlot = this.Content.Load<Texture2D>("queue-slot");
@@ -60,11 +64,31 @@ namespace TheGame
 
             Origin = new Vector2(queueSlot.Width * 2.5f, queueSlot.Height);
 
+            QueueBlueLocation = new Vector2(-1.5f * queueSlot.Width, queueSlot.Height);
+            QueueRedLocation = new Vector2(8.5f * queueSlot.Width, queueSlot.Height);
+
             Board = new Board();
             Board.Scramble(); // TODO: This was a test.
-    }
 
-    GamePadState gamepad;
+            PieceImages = new Dictionary<PieceTypes, Texture2D>()
+            {
+                { PieceTypes.Bomb, pieceBomb },
+                { PieceTypes.GoTwice, pieceTwice },
+                { PieceTypes.Kitty, pieceKitty },
+                { PieceTypes.NormalBlue, pieceBlue },
+                { PieceTypes.NormalRed, pieceRed },
+                { PieceTypes.PacMan, piecePacMan },
+                { PieceTypes.Stone, pieceStone },
+                { PieceTypes.SwapDown, pieceSwapDown },
+                { PieceTypes.SwapLeft, pieceSwapLeft },
+                { PieceTypes.SwapRight, pieceSwapRight },
+                { PieceTypes.ToggleColors, pieceToggleColors },
+            };
+        }
+
+        public Dictionary<PieceTypes, Texture2D> PieceImages;
+
+        GamePadState gamepad;
 
 		public override void Update(GameTime gameTime)
 		{
@@ -86,14 +110,24 @@ namespace TheGame
                 }
                 else
                 {
-                    var matched = Board.ScanForMatches();
-                    if (matched == PieceTypes.NormalBlue)
+                    var matchRed = Board.ScanForMatches(Board.MatchOnRed);
+                    var matchBlue = Board.ScanForMatches(Board.MatchOnBlue);
+
+                    if (matchRed == PieceTypes.NormalRed && matchBlue == PieceTypes.NormalBlue)
+                    {
+                        // TIE GAME :/
+                    }
+                    else if (matchBlue == PieceTypes.NormalBlue)
                     {
                         // BLUE WINS!
                     }
-                    else if(matched == PieceTypes.NormalRed)
+                    else if(matchRed == PieceTypes.NormalRed)
                     {
                         // RED WINS!
+                    }
+                    else if(Board.IsFull)
+                    {
+                        // TIE GAME :/
                     }
                 }
             }
@@ -113,7 +147,7 @@ namespace TheGame
                 for (int y = 0; y < 8; y++)
                 {
                     var piece = Board.Pieces[x, y];
-                    Texture2D image = null;
+                    Texture2D image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
                     switch(piece.PieceType)
                     {
                         case PieceTypes.Bomb: image = pieceBomb; break;
@@ -149,10 +183,19 @@ namespace TheGame
                     location.Y = y * tileSlot.Height;
                     spriteBatch.Draw(tileSlot, Origin + location, Color.White);
 
-                    for (int i = 1; i < 5; i++)
+                    var queueSlotHeight = new Vector2(0, queueSlot.Height);
+                    for (int i = 0; i < 4; i++)
                     {
-                        spriteBatch.Draw(queueSlot, Origin + new Vector2(-1.5f * queueSlot.Width, i * queueSlot.Height), Color.White);
-                        spriteBatch.Draw(queueSlot, Origin + new Vector2(8.5f * queueSlot.Width, i * queueSlot.Height), Color.White);
+                        spriteBatch.Draw(queueSlot, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
+                        spriteBatch.Draw(queueSlot, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);
+
+                        var piece = Board.BlueQueue[i];
+                        Texture2D image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
+                        if (image != null) { spriteBatch.Draw(image, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White); }
+
+                        piece = Board.RedQueue[i];
+                        image = piece.PieceType == PieceTypes.Empty ? null : PieceImages[piece.PieceType];
+                        if (image != null) { spriteBatch.Draw(image, Origin + QueueRedLocation + i * queueSlotHeight, Color.White); }
                     }
                 }
             }
