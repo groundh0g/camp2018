@@ -26,9 +26,12 @@ namespace TheGame
         public Texture2D pieceSwapLeft;
         public Texture2D pieceSwapRight;
         public Texture2D pieceTwice;
-
         public Texture2D piecePacMan;
         public Texture2D pieceToggleColors;
+
+        public Texture2D pieceCheckMark;
+        public Texture2D hand;
+
         public Texture2D queueSlot;
         public Texture2D queueSelect;
 
@@ -52,6 +55,8 @@ namespace TheGame
             pieceTwice = this.Content.Load<Texture2D>("piece-twice");
             piecePacMan = this.Content.Load<Texture2D>("piece-pacman");
             pieceToggleColors = this.Content.Load<Texture2D>("piece-swap-colors");
+            pieceCheckMark = this.Content.Load<Texture2D>("piece-check");
+            hand = this.Content.Load<Texture2D>("hand-top");
 
             Origin = new Vector2(queueSlot.Width * 2.5f, queueSlot.Height);
 
@@ -81,7 +86,15 @@ namespace TheGame
                 }
                 else
                 {
-                    // DO SOMETHING!
+                    var matched = Board.ScanForMatches();
+                    if (matched == PieceTypes.NormalBlue)
+                    {
+                        // BLUE WINS!
+                    }
+                    else if(matched == PieceTypes.NormalRed)
+                    {
+                        // RED WINS!
+                    }
                 }
             }
 
@@ -120,6 +133,10 @@ namespace TheGame
                     if(image != null)
                     {
                         spriteBatch.Draw(image, Origin + location - piece.Delta, Color.White);
+                        if (piece.IsChecked)
+                        {
+                            spriteBatch.Draw(pieceCheckMark, Origin + location - piece.Delta, Color.White);
+                        }
                     }
                 }
             }

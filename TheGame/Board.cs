@@ -38,10 +38,19 @@ namespace TheGame
                 for (int y = 0; y < 8; y++)
                 {
                     var piece = (PieceTypes)values.GetValue(rand.Next(values.Length - 1));
-                    Pieces[x, y].PieceType = piece;
+                    var normalTile = rand.Next(10);
+                    Pieces[x, y].PieceType = 
+                        normalTile < 3 ? PieceTypes.NormalBlue  : 
+                        normalTile < 6 ? PieceTypes.NormalRed : piece;
                 }
             }
         }
+
+        private List<PieceTypes> MatchOn = new List<PieceTypes>()
+        {
+            PieceTypes.NormalBlue,
+            PieceTypes.NormalRed,
+        };
 
         /// <summary>
         /// This will scan the board for match-four.
@@ -49,17 +58,25 @@ namespace TheGame
         /// <returns>NormalRed, NormalBlue, or Empty (for a tie)</returns>
         public PieceTypes ScanForMatches()
         {
+            // Scan Horizontal
             for (int y = 0; y < 8; y++)
             {
                 var temp = PieceTypes.Empty;
                 var tempCount = 0;
                 for (int x = 1; x < 8; x++)
                 {
-                    if (Pieces[x, y] == Pieces[x - 1, y])
+                    if (MatchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x - 1, y].PieceType)
                     {
                         temp = Pieces[x, y].PieceType;
                         tempCount++;
-                        if (tempCount >= 3) return temp;
+                        if (tempCount >= 3)
+                        {
+                            Pieces[x - 0, y].IsChecked = true;
+                            Pieces[x - 1, y].IsChecked = true;
+                            Pieces[x - 2, y].IsChecked = true;
+                            Pieces[x - 3, y].IsChecked = true;
+                            return temp;
+                        }
                     }
                     else
                     {
@@ -69,17 +86,25 @@ namespace TheGame
                 }
             }
 
+            // Scan Vertical
             for (int x = 0; x < 8; x++)
             {
                 var temp = PieceTypes.Empty;
                 var tempCount = 0;
                 for (int y = 1; y < 8; y++)
                 {
-                    if (Pieces[x, y] == Pieces[x, y - 1])
+                    if (MatchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x, y - 1].PieceType)
                     {
                         temp = Pieces[x, y].PieceType;
                         tempCount++;
-                        if (tempCount >= 3) return temp;
+                        if (tempCount >= 3)
+                        {
+                            Pieces[x, y - 0].IsChecked = true;
+                            Pieces[x, y - 1].IsChecked = true;
+                            Pieces[x, y - 2].IsChecked = true;
+                            Pieces[x, y - 3].IsChecked = true;
+                            return temp;
+                        }
                     }
                     else
                     {
@@ -89,8 +114,95 @@ namespace TheGame
                 }
             }
 
-            // TODO: Scan Diagonal x2?
+            // Scan Diagonal: //
+            var endpoints = new List<Point[]>() {
+                new Point[] { new Point(0,3), new Point(3,0) },
+                new Point[] { new Point(0,4), new Point(4,0) },
+                new Point[] { new Point(0,5), new Point(5,0) },
+                new Point[] { new Point(0,6), new Point(6,0) },
+                new Point[] { new Point(0,7), new Point(7,0) },
+                new Point[] { new Point(1,7), new Point(7,1) },
+                new Point[] { new Point(2,7), new Point(7,2) },
+                new Point[] { new Point(3,7), new Point(7,3) },
+                new Point[] { new Point(4,7), new Point(7,4) },
+            };
 
+            foreach(var point in endpoints)
+            {
+                var matched = ScanDiagonal(point[0], point[1]);
+                if(matched != PieceTypes.Empty)
+                {
+                    return matched;
+                }
+            }
+
+            // Scan Diagonal: \\
+            endpoints = new List<Point[]>() {
+                new Point[] { new Point(3,7), new Point(0,4) },
+                new Point[] { new Point(4,7), new Point(0,3) },
+                new Point[] { new Point(5,7), new Point(0,2) },
+                new Point[] { new Point(6,7), new Point(0,1) },
+                new Point[] { new Point(7,7), new Point(0,0) },
+                new Point[] { new Point(7,6), new Point(1,0) },
+                new Point[] { new Point(7,5), new Point(2,0) },
+                new Point[] { new Point(7,4), new Point(3,0) },
+                new Point[] { new Point(7,3), new Point(4,0) },
+
+            };
+
+            foreach (var point in endpoints)
+            {
+                var matched = ScanDiagonal(point[0], point[1]);
+                if (matched != PieceTypes.Empty)
+                {
+                    return matched;
+                }
+            }
+
+            return PieceTypes.Empty;
+        }
+
+        private PieceTypes ScanDiagonal(Point start, Point end)
+        {
+            int dx = end.X - start.X;
+            int dy = end.Y - start.Y;
+            dx = dx < 0 ? -1 : 1;
+            dy = dy < 0 ? -1 : 1;
+
+            Point point = start;
+            point.X += dx;
+            point.Y += dy;
+
+            var temp = PieceTypes.Empty;
+            var tempCount = 0;
+
+            while (point != end)
+            {
+                var x = point.X;
+                var y = point.Y;
+
+                if (MatchOn.Contains(Pieces[x, y].PieceType) && Pieces[x, y].PieceType == Pieces[x - dx, y - dy].PieceType)
+                {
+                    temp = Pieces[x, y].PieceType;
+                    tempCount++;
+                    if (tempCount >= 3)
+                    {
+                        Pieces[x - dx * 0, y - dy * 0].IsChecked = true;
+                        Pieces[x - dx * 1, y - dy * 1].IsChecked = true;
+                        Pieces[x - dx * 2, y - dy * 2].IsChecked = true;
+                        Pieces[x - dx * 3, y - dy * 3].IsChecked = true;
+                        return temp;
+                    }
+                }
+                else
+                {
+                    temp = PieceTypes.Empty;
+                    tempCount = 0;
+                }
+
+                point.X += dx;
+                point.Y += dy;
+            }
 
             return PieceTypes.Empty;
         }
@@ -107,6 +219,7 @@ namespace TheGame
                 {
                     if (Pieces[x, y].PieceType != PieceTypes.Empty)
                     {
+                        if(Pieces[x,y].Delta.Y > 0.0f) { result = true; }
                         Pieces[x, y].Delta = new Vector2(0, Math.Max(0, Pieces[x, y].Delta.Y - speed * elapsed));
                     }
                 }
@@ -124,6 +237,11 @@ namespace TheGame
                             Pieces[x, y] = Pieces[x, y - 1];
                             Pieces[x, y - 1] = Piece.Empty;
                             Pieces[x, y].Delta = new Vector2(0, 128);
+                            result = true;
+                        }
+                        else if (piece.Delta.Y > 0)
+                        {
+                            result = true;
                         }
                     }
                 }

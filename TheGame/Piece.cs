@@ -30,5 +30,6 @@ namespace TheGame
         public Vector2 Delta { get; set; }
 
         public static Piece Empty { get { return new Piece() { PieceType = PieceTypes.Empty }; } }
+        public bool IsChecked { get; set; }
     }
 }

@@ -154,6 +154,12 @@
     <Content Include="Content\queue-slot.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\hand-top.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\piece-check.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="..\MoreOnCode.Xna\MoreOnCode.Xna.projitems" Label="Shared" />
   <Import Project="..\TheGame\TheGame.projitems" Label="Shared" />
