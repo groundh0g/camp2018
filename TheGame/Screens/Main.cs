@@ -99,14 +99,25 @@ namespace TheGame
 
         GamePadState gamepad;
 
+        public int SelectedQueueIndex;
+
 		public override void Update(GameTime gameTime)
 		{
+            // TODO: Fix, the add 2nd controller
 			gamepad = GamePadEx.GetState(PlayerIndex.One);
 
+            if(GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.DPadUp))
+            {
+                SelectedQueueIndex = Math.Max(0, SelectedQueueIndex - 1);
+            }
+            else if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.DPadDown))
+            {
+                SelectedQueueIndex = Math.Min(3, SelectedQueueIndex + 1);
+            }
 
-			if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.A))
+            if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.A))
 			{
-				ScreenUtil.Show(new Credits(this.Parent));
+				//ScreenUtil.Show(new Credits(this.Parent));
 			}
 			else if (GamePadEx.WasJustPressed(PlayerIndex.One, Buttons.Back))
 			{
@@ -236,7 +247,7 @@ namespace TheGame
             var queueSlotHeight = new Vector2(0, queueSlot.Height);
             for (int i = 0; i < 4; i++)
             {
-                if (i == 0)
+                if (i == SelectedQueueIndex)
                 {
                     spriteBatch.Draw(queueSelect, Origin + QueueBlueLocation + i * queueSlotHeight, Color.White);
                     spriteBatch.Draw(queueSelect, Origin + QueueRedLocation + i * queueSlotHeight, Color.White);

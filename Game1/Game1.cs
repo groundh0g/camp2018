@@ -17,6 +17,8 @@ using Microsoft.Xna.Framework.Media;
 using MoreOnCode.Lib.Util;
 using MoreOnCode.Xna.Framework.Input;
 
+using MoreOnCode.Xna.Framework;
+
 namespace TheGame
 {
     /// <summary>
@@ -64,7 +66,8 @@ namespace TheGame
 		{
 			// TODO: Add your initialization logic here
 			ScreenUtil.Show(new Splash(this));
-			GamePadEx.KeyboardPlayerIndex = PlayerIndex.One;
+            //GamePadEx.KeyboardPlayerIndex = PlayerIndex.One;
+            GamePadEx.KeyboardPlayerIndexEx = PlayerIndexEx.Auto;
 
 			base.Initialize();
 		}

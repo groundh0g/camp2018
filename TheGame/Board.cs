@@ -8,6 +8,7 @@ namespace TheGame
     public class Board
     {
         public Piece[,] Pieces = new Piece[8, 8];
+        public PlayerIndex Player;
 
         public Board()
         {
@@ -56,8 +57,15 @@ namespace TheGame
                 }
             }
 
+            Player = PlayerIndex.One;
+
             FillQueue(BlueQueue, PieceTypes.NormalBlue);
             FillQueue(RedQueue, PieceTypes.NormalRed);
+        }
+
+        public void TogglePlayer()
+        {
+            Player = Player == PlayerIndex.One ? PlayerIndex.One : PlayerIndex.Two;
         }
 
         public void Scramble()

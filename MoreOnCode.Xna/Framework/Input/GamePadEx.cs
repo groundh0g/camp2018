@@ -136,7 +136,7 @@ namespace MoreOnCode.Xna.Framework.Input
 						leftThumbstick.X = THUMBSTICK_MIN;
 					}
 
-                    Buttons buttons = Buttons.BigButton;
+                    Buttons buttons = 0;
                     foreach(var btn in pressedButtons)
                     {
                         buttons = buttons | btn;
