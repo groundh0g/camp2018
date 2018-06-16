@@ -13,6 +13,9 @@ namespace TheGame
         public bool Loop = false;
         public Point Location = Point.Zero;
 
+        public Piece Piece { get; set; }
+        public bool ExplodePiece { get; set; }
+
         private int currentFrame;
         public void Start(float initElapsed = 0)
         {
@@ -27,8 +30,17 @@ namespace TheGame
             elapsed += gameTime.ElapsedGameTime.TotalSeconds;
             if(elapsed >= FrameDuration)
             {
+                if (ExplodePiece) { Piece.IsExploded = true; }
                 currentFrame++;
-                if (IsDone && Loop) { currentFrame = 0; }
+                if (IsDone && Loop) {
+                    currentFrame = 0;
+                }
+                else if (IsDone && ExplodePiece && Piece.PieceType != PieceTypes.Empty)
+                {
+                    Piece.IsChecked = false;
+                    Piece.IsExploded = false;
+                    Piece.PieceType = PieceTypes.Empty;
+                }
                 elapsed = 0;
             }
         }

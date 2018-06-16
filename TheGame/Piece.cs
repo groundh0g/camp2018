@@ -32,5 +32,15 @@ namespace TheGame
         public static Piece Empty { get { return new Piece() { PieceType = PieceTypes.Empty }; } }
         public bool IsChecked { get; set; }
         public bool IsExploded { get; set; }
+
+        public Piece() { }
+        public Piece(Piece src)
+        {
+            this.Texture = src.Texture;
+            this.PieceType = src.PieceType;
+            this.Delta = src.Delta;
+            this.IsChecked = false;
+            this.IsExploded = false;
+        }
     }
 }

@@ -148,7 +148,7 @@ namespace TheGame
                     StagedPieceColumn = 3;
                     State = GameState.SelectingColumn;
 
-                    Board.ClearPieceFlags();
+                    //Board.ClearPieceFlags();
                 }
 
             }
@@ -179,7 +179,7 @@ namespace TheGame
                                 break;
                         }
 
-                        Board.ClearPieceFlags();
+                        //Board.ClearPieceFlags();
 
                         State = GameState.SelectingFromQueue;
                         StagedPiece = Piece.Empty;
@@ -219,19 +219,12 @@ namespace TheGame
                 {
                     // DO NOTHING!
                 }
-                else if(Board.RemoveExploded())
-                {
-                    // DO NOTHING!
-                    Board.ClearPieceFlags();
-                }
                 else if (Board.DoGravity((float)gameTime.ElapsedGameTime.TotalSeconds))
                 {
                     // DO NOTHING!
                 }
                 else
                 {
-                    Board.ClearPieceFlags();
-
                     if (Board.ScanForPowerUps())
                     {
 
@@ -272,7 +265,7 @@ namespace TheGame
 		}
 
         public Vector2 Origin = Vector2.Zero;
-        public Color ColorTransparent = new Color(Color.White, 0.5f);
+        public Color ColorExploded = new Color(Color.Black, 0.5f);
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -311,7 +304,7 @@ namespace TheGame
                     location.Y = y * tileSlot.Height;
                     if(image != null)
                     {
-                        var color = piece.IsExploded ? ColorTransparent : Color.White;
+                        var color = piece.IsExploded ? ColorExploded : Color.White;
                         spriteBatch.Draw(image, Origin + location - piece.Delta, color);
                         if (piece.IsChecked)
                         {

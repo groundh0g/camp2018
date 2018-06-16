@@ -342,31 +342,26 @@ namespace TheGame
             {
                 for (int x = 0; x < 8; x++)
                 {
-                    if (powerups.Contains(Pieces[x, y].PieceType))
+                    if (powerups.Contains(Pieces[x, y].PieceType) && Pieces[x,y].Delta == Vector2.Zero)
                     {
                         result = true;
-                        var newPiece = Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue;
                         switch (Pieces[x, y].PieceType)
                         {
                             case PieceTypes.ToggleColors:
                                 ToggleColorsEffect();
-                                Pieces[x, y].PieceType = newPiece;
+                                Pieces[x, y].PieceType = PlayerColor;
                                 break;
                             case PieceTypes.Bomb:
                                 BombEffect(x, y);
-                                Pieces[x, y].PieceType = newPiece;
                                 break;
                             case PieceTypes.SwapLeft:
                                 SwapLeft(x, y);
-                                Pieces[x, y].PieceType = newPiece;
                                 break;
                             case PieceTypes.SwapRight:
                                 SwapRight(x, y);
-                                Pieces[x, y].PieceType = newPiece;
                                 break;
                             case PieceTypes.SwapDown:
                                 SwapDown(x, y);
-                                Pieces[x, y].PieceType = newPiece;
                                 break;
                         }
                     }
@@ -393,7 +388,6 @@ namespace TheGame
             }
         }
 
-
         public List<Animation> Animations { get; set; }
         public List<Texture2D> ExplosionImages { get; set; }
 
@@ -414,9 +408,10 @@ namespace TheGame
                 explosion.Loop = false;
                 explosion.Start((float)count * delay);
                 explosion.Location = new Point(x2, y);
+                explosion.Piece = Pieces[x2, y];
+                explosion.ExplodePiece = true;
                 Animations.Add(explosion);
                 count++;
-                Pieces[x2, y].IsExploded = true;
             }
 
             count = 1;
@@ -431,9 +426,10 @@ namespace TheGame
                 explosion.Loop = false;
                 explosion.Start((float)count * delay);
                 explosion.Location = new Point(x2, y);
+                explosion.Piece = Pieces[x2, y];
+                explosion.ExplodePiece = true;
                 Animations.Add(explosion);
                 count++;
-                Pieces[x2, y].IsExploded = true;
             }
 
             count = 1;
@@ -448,35 +444,29 @@ namespace TheGame
                 explosion.Loop = false;
                 explosion.Start((float)count * delay);
                 explosion.Location = new Point(x, y2);
+                explosion.Piece = Pieces[x, y2];
+                explosion.ExplodePiece = true;
                 Animations.Add(explosion);
                 count++;
-                Pieces[x, y2].IsExploded = true;
             }
         }
 
-        public bool RemoveExploded()
+        public PieceTypes PlayerColor
         {
-            var result = false;
-            for (int y = 0; y < 8; y++)
-            {
-                for (int x = 0; x < 8; x++)
-                {
-                    if (Pieces[x, y].IsExploded)
-                    {
-                        Pieces[x, y] = Piece.Empty;
-                        result = true;
-                    }
-                }
-            }
-            return result;
+            get { return Player == PlayerIndex.One ? PieceTypes.NormalBlue : PieceTypes.NormalRed; }
+        }
+
+        public PieceTypes OtherPlayerColor
+        {
+            get { return Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue; }
         }
 
         public void SwapLeft(int x, int y)
         {
             if (x > 0)
             {
-                var other = Pieces[x - 1, y];
-                switch (other.PieceType)
+                Pieces[x, y].PieceType = OtherPlayerColor;
+                switch (Pieces[x - 1, y].PieceType)
                 {
                     case PieceTypes.Empty:
                     case PieceTypes.Stone:
@@ -492,8 +482,8 @@ namespace TheGame
         {
             if (x < 7)
             {
-                var other = Pieces[x + 1, y];
-                switch (other.PieceType)
+                Pieces[x, y].PieceType = OtherPlayerColor;
+                switch (Pieces[x + 1, y].PieceType)
                 {
                     case PieceTypes.Empty:
                     case PieceTypes.Stone:
@@ -509,8 +499,8 @@ namespace TheGame
         {
             if (y < 7)
             {
-                var other = Pieces[x, y + 1];
-                switch (other.PieceType)
+                Pieces[x, y].PieceType = OtherPlayerColor;
+                switch (Pieces[x, y + 1].PieceType)
                 {
                     case PieceTypes.Empty:
                     case PieceTypes.Stone:
@@ -524,24 +514,10 @@ namespace TheGame
 
         private void Swap(Point a, Point b)
         {
-            Pieces[a.X, a.Y].PieceType = Pieces[b.X, b.Y].PieceType;
-            Pieces[b.X, b.Y].PieceType = Player == PlayerIndex.One ? PieceTypes.NormalBlue : PieceTypes.NormalRed;
-            ClearPieceFlags();
-            //var swap = Pieces[a.X, a.Y];
-            //Pieces[a.X, a.Y] = Pieces[b.X, b.Y];
-            //Pieces[b.X, b.Y].PieceType = Player == PlayerIndex.One ? PieceTypes.NormalRed : PieceTypes.NormalBlue;
-        }
-
-        public void ClearPieceFlags()
-        {
-            for (int y = 0; y < 8; y++)
-            {
-                for (int x = 0; x < 8; x++)
-                {
-                    Pieces[x, y].IsChecked = false;
-                    Pieces[x, y].IsExploded = false;
-                }
-            }
+            var pieceA = new Piece(Pieces[a.X, a.Y]);
+            var pieceB = new Piece(Pieces[b.X, b.Y]);
+            Pieces[a.X, a.Y] = pieceB;
+            Pieces[b.X, b.Y] = pieceA;
         }
     }
 }
